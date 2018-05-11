@@ -46,6 +46,14 @@
             android:hint="@string/input_text_hint"/>
 
         <Button
+            android:id="@+id/ring_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="onClickRingButton"
+            android:text="@string/ring_button_label" />
+
+        <Button
             android:id="@+id/send_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

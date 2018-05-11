@@ -90,6 +90,8 @@ public class MainActivity extends AppCompatActivity {
 
     private SoundPool soundPool;
     private int sound_connected;
+    private int sound_ring;
+    private String sound_ring_message = "mokugyo";
     private int sound_disconnected;
 
     @Override
@@ -150,6 +152,8 @@ public class MainActivity extends AppCompatActivity {
         // Sound Effects by NHK Creative Library
         // https://www.nhk.or.jp/archives/creative/material/view.html?m=D0002011524_00000
         sound_connected = soundPool.load(this, R.raw.nhk_doorbell, 1);
+
+        sound_ring = soundPool.load(this, R.raw.nhk_mokugyo, 1);
         // https://www.nhk.or.jp/archives/creative/material/view.html?m=D0002070102_00000
         sound_disconnected = soundPool.load(this, R.raw.nhk_woodblock2, 1);
 
@@ -271,6 +275,15 @@ public class MainActivity extends AppCompatActivity {
                 startServer1();
             else
                 setState(State.Disconnected);
+        }
+    }
+
+    public void onClickRingButton(View v) {
+        Log.d(TAG, "onClickRingButton");
+        if (commThread != null) {
+            long time = System.currentTimeMillis();
+            ChatMessage message = new ChatMessage(message_seq, time, sound_ring_message, devName);
+            commThread.send(message);
         }
     }
 
@@ -691,9 +704,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showMessage(ChatMessage message) {
-        chatLogAdapter.add(message);
-        chatLogAdapter.notifyDataSetChanged();
-        chatLogView.smoothScrollToPosition(chatLogAdapter.getCount());
+        if (message.content.equals(sound_ring_message)) {
+            soundPool.play(sound_ring, 1.0f, 1.0f, 0, 0, 1);
+        } else {
+            chatLogAdapter.add(message);
+            chatLogAdapter.notifyDataSetChanged();
+            chatLogView.smoothScrollToPosition(chatLogAdapter.getCount());
+        }
     }
 
     private void disconnect() {
